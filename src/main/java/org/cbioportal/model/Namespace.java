@@ -6,20 +6,20 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import java.io.Serializable;
 import java.math.BigDecimal;
 
-public class Namespace extends Alteration implements Serializable {
+public class Namespace extends UniqueKeyBase implements Serializable {
     
-    private String keyword;
+    private String outerKey;
     @JsonRawValue
     @Schema(type = "java.util.Map")
     private Object annotationJSON;
     
 
-    public String getKeyword() {
-        return keyword;
+    public String getOuterKey() {
+        return outerKey;
     }
 
-    public void setKeyword(String keyword) {
-        this.keyword = keyword;
+    public void setOuterKey(String outerKey) {
+        this.outerKey = outerKey;
     }
 
     public Object getAnnotationJSON() {

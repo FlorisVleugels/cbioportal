@@ -51,7 +51,7 @@ import java.util.List;
 @Tag(name = InternalApiTags.NAMESPACES, description = " ")
 public class NamespaceController {
 
-    // @Autowired
+    @Autowired
     private NamespaceService namespaceService;
 
     @PreAuthorize("hasPermission(#involvedCancerStudies, 'Collection<CancerStudyId>', T(org.cbioportal.utils.security.AccessLevel).READ)")
@@ -60,8 +60,9 @@ public class NamespaceController {
     @ApiResponse(responseCode = "200", description = "OK")
     public ResponseEntity<Namespace> fetchNamespace() {
 
-        List <String> Keyword = new ArrayList<>();
+        List <Namespace> Keyword = new ArrayList<>();
+        Keyword = namespaceService.fetchOuterKey(Keyword);
 
-        return new ResponseEntity<>(namespaceService.fetchNamespace(Keyword), HttpStatus.OK);
+        return new ResponseEntity<>(Keyword, HttpStatus.OK);
     }
 }
