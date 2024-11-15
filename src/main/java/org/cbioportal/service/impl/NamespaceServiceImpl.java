@@ -16,9 +16,9 @@ public class NamespaceServiceImpl implements NamespaceService {
     private NamespaceRepository namespaceRepository;
 
     @Override
-    public List<Namespace> fetchOuterKey(List<String> OuterKey) {
+    public List<Namespace> fetchOuterKey() {
 
-        List<Namespace> namespaceList = namespaceRepository.getNamespaceOuterKey(OuterKey);
+        List<Namespace> namespaceList = namespaceRepository.getNamespaceOuterKey();
         
         return namespaceList;
     }

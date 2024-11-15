@@ -6,5 +6,5 @@ import java.util.List;
 
 public interface NamespaceService {
 
-    List<Namespace> fetchOuterKey(List<String> OuterKey);
+    List<Namespace> fetchOuterKey();
 }

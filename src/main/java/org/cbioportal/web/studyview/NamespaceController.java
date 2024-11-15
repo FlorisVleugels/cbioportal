@@ -58,10 +58,10 @@ public class NamespaceController {
     @RequestMapping(value = "/namespaces/fetch", method = RequestMethod.POST)
     @Operation(description = "Fetch namespace columns")
     @ApiResponse(responseCode = "200", description = "OK")
-    public ResponseEntity<Namespace> fetchNamespace() {
+    public ResponseEntity<List<Namespace>> fetchNamespace() {
 
         List <Namespace> Keyword = new ArrayList<>();
-        Keyword = namespaceService.fetchOuterKey(Keyword);
+        Keyword = namespaceService.fetchOuterKey();
 
         return new ResponseEntity<>(Keyword, HttpStatus.OK);
     }
