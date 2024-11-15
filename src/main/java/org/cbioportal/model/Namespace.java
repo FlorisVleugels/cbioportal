@@ -9,11 +9,10 @@ import java.math.BigDecimal;
 public class Namespace extends UniqueKeyBase implements Serializable {
     
     private String outerKey;
+    private String innerKey;
     @JsonRawValue
     @Schema(type = "java.util.Map")
-    private Object annotationJSON;
     
-
     public String getOuterKey() {
         return outerKey;
     }
@@ -22,12 +21,11 @@ public class Namespace extends UniqueKeyBase implements Serializable {
         this.outerKey = outerKey;
     }
 
-    public Object getAnnotationJSON() {
-        return annotationJSON;
+    public String getInnerKey() {
+        return innerKey;
     }
 
-    public void setAnnotationJSON(String annotationJSON) {
-        this.annotationJSON = annotationJSON;
+    public void setInnerKey(String innerKey) {
+        this.innerKey = innerKey;
     }
-
 }

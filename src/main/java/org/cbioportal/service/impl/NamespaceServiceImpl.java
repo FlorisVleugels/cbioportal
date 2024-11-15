@@ -5,6 +5,8 @@ import org.cbioportal.persistence.NamespaceRepository;
 import org.cbioportal.service.NamespaceService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -16,10 +18,43 @@ public class NamespaceServiceImpl implements NamespaceService {
     private NamespaceRepository namespaceRepository;
 
     @Override
-    public List<Namespace> fetchOuterKey() {
+    public List<Namespace> fetchNamespaceKeys() {
+        ObjectMapper objectMapper = new ObjectMapper();
 
-        List<Namespace> namespaceList = namespaceRepository.getNamespaceOuterKey();
-        
-        return namespaceList;
+        List<Namespace> outerKeys = namespaceRepository.getNamespaceOuterKey();
+        List<Namespace> combinedNamespaces = new ArrayList<>();
+
+        for (Namespace outerNamespace : outerKeys) {
+        try {
+            // Parse the JSON string in outerKey to extract actual keys
+            String outerKeyJson = outerNamespace.getOuterKey();
+            List<String> outerKeyList = objectMapper.readValue(outerKeyJson, new TypeReference<List<String>>() {});
+
+            for (String outerKey : outerKeyList) {
+                // Fetch inner keys for each outer key
+                List<Namespace> innerKeys = namespaceRepository.getNamespaceInnerKey(outerKey);
+
+                for (Namespace innerNamespace : innerKeys) {
+                    // Parse the JSON string in innerKey to extract individual keys
+                    String innerKeyJson = innerNamespace.getInnerKey();
+                    List<String> innerKeyList = objectMapper.readValue(innerKeyJson, new TypeReference<List<String>>() {});
+
+                    for (String innerKey : innerKeyList) {
+                        // Create a new Namespace object for each innerKey
+                        Namespace unpackedNamespace = new Namespace();
+                        unpackedNamespace.setOuterKey(outerKey);
+                        unpackedNamespace.setInnerKey(innerKey);
+
+                        combinedNamespaces.add(unpackedNamespace);
+                    }
+                }
+            }
+        } catch (Exception e) {
+            System.err.println("Failed to parse keys for outer key: " + outerNamespace.getOuterKey());
+            e.printStackTrace();
+        }
+    }
+
+        return combinedNamespaces;
     }
 }

@@ -61,7 +61,7 @@ public class NamespaceController {
     public ResponseEntity<List<Namespace>> fetchNamespace() {
 
         List <Namespace> Keyword = new ArrayList<>();
-        Keyword = namespaceService.fetchOuterKey();
+        Keyword = namespaceService.fetchNamespaceKeys();
 
         return new ResponseEntity<>(Keyword, HttpStatus.OK);
     }

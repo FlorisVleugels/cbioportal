@@ -3,21 +3,18 @@
 
 <mapper namespace="org.cbioportal.persistence.mybatis.NamespaceMapper">
 
-    <sql id="select">
-
-    </sql>
-
     <select id="getNamespaceOuterKey" resultType="org.cbioportal.model.Namespace">
-        SELECT DISTINCT JSON_KEYS(ANNOTATION_JSON) AS outerKey FROM mutation;
+        SELECT DISTINCT JSON_KEYS(ANNOTATION_JSON) AS outerKey 
+        FROM mutation;
     </select>
 
     <select id="getNamespaceInnerKey" resultType="org.cbioportal.model.Namespace">
-        SELECT DISTINCT JSON_KEYS(JSON_EXTRACT(ANNOTATION_JSON, '$.mut')) AS innerKey
+        SELECT DISTINCT JSON_KEYS(JSON_EXTRACT(ANNOTATION_JSON, CONCAT('$.', #{outerKey}))) AS innerKey
         FROM mutation
-        WHERE JSON_EXTRACT(ANNOTATION_JSON, '$.mut') IS NOT NULL;
+        WHERE JSON_EXTRACT(ANNOTATION_JSON, CONCAT('$.', #{outerKey})) IS NOT NULL;
     </select>
 
-    <select id="getNamespaceCountByKey" resultType="org.cbioportal.model.NamespaceCountByKey">
+    <select id="getNamespaceCountByKeys" resultType="org.cbioportal.model.NamespaceCountByKey">
         SELECT JSON_UNQUOTE(JSON_EXTRACT(ANNOTATION_JSON, '$.mut.Actionable')) AS Actionable, COUNT(*) AS count
         FROM mutation
         GROUP BY JSON_UNQUOTE(JSON_EXTRACT(ANNOTATION_JSON, '$.mut.Actionable'));  

@@ -19,4 +19,10 @@ public class NamespaceMyBatisRepository implements NamespaceRepository {
 
         return namespaceMapper.getNamespaceOuterKey();
     }
+
+    @Override
+    public List<Namespace> getNamespaceInnerKey(String outerKey) {
+
+        return namespaceMapper.getNamespaceInnerKey(outerKey);
+    }
 }

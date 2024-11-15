@@ -9,4 +9,6 @@ public interface NamespaceRepository {
 
     // @Cacheable(cacheResolver = "generalRepositoryCacheResolver", condition = "@cacheEnabledConfig.getEnabled()")
     List<Namespace> getNamespaceOuterKey();
+
+    List<Namespace> getNamespaceInnerKey(String outerKey);
 }
