@@ -10,6 +10,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.Size;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
@@ -27,6 +28,7 @@ import org.cbioportal.model.ClinicalDataCountItem;
 import org.cbioportal.model.ClinicalEventTypeCount;
 import org.cbioportal.model.ClinicalViolinPlotData;
 import org.cbioportal.model.CopyNumberCountByGene;
+import org.cbioportal.model.NamespaceCountByKeys;
 import org.cbioportal.model.DensityPlotBin;
 import org.cbioportal.model.DensityPlotData;
 import org.cbioportal.model.GenericAssayDataBin;
@@ -66,6 +68,7 @@ import org.cbioportal.web.parameter.MutationOption;
 import org.cbioportal.web.parameter.PagingConstants;
 import org.cbioportal.web.parameter.Projection;
 import org.cbioportal.web.parameter.SampleIdentifier;
+import org.cbioportal.web.parameter.NamespaceKeyIdentifier;
 import org.cbioportal.web.parameter.StudyViewFilter;
 import org.cbioportal.web.util.ClinicalDataBinUtil;
 import org.cbioportal.web.util.ClinicalDataFetcher;
@@ -1221,5 +1224,20 @@ public class StudyViewController {
             );
 
         return new ResponseEntity<>(result, HttpStatus.OK);
+    }
+
+    @PreAuthorize("hasPermission(#involvedCancerStudies, 'Collection<CancerStudyId>', T(org.cbioportal.utils.security.AccessLevel).READ)")
+    @RequestMapping(value = "/namespace-data-counts/fetch", method = RequestMethod.POST)
+    @Operation(description = "Get Counts of selected Namespace Column by Study View Filter")
+    @ApiResponse(responseCode = "200", description = "OK")
+    public ResponseEntity<List<NamespaceCountByKeys>> fetchNamespace(        
+        @Parameter(required = true, description = "Outer and Inner json Key for Namespace Column")
+        @Size(min = 1, max = CLINICAL_TAB_MAX_PAGE_SIZE)
+        @RequestBody NamespaceKeyIdentifier namespaceKeyIdentifier) {
+
+        String outerKey = namespaceKeyIdentifier.getOuterKey();
+        String innerKey = namespaceKeyIdentifier.getInnerKey();
+
+        return new ResponseEntity<>(studyViewService.fetchNamespaceCountByKeys(outerKey, innerKey), HttpStatus.OK);
     }
 }
