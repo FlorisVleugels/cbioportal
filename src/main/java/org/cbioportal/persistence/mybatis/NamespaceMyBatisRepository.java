@@ -1,7 +1,7 @@
 package org.cbioportal.persistence.mybatis;
 
 import org.cbioportal.model.Namespace;
-import org.cbioportal.model.NamespaceCountByKeys;
+import org.cbioportal.model.NamespaceDataCount;
 import org.cbioportal.persistence.NamespaceRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
@@ -28,8 +28,8 @@ public class NamespaceMyBatisRepository implements NamespaceRepository {
     }
 
     @Override
-    public List<NamespaceCountByKeys> getNamespaceCountByKeys(String outerKey, String innerKey) {
+    public List<NamespaceDataCount> getNamespaceDataCounts(String outerKey, String innerKey) {
 
-        return namespaceMapper.getNamespaceCountByKeys(outerKey, innerKey);
+        return namespaceMapper.getNamespaceDataCounts(outerKey, innerKey);
     }
 }

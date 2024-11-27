@@ -1,7 +1,11 @@
 package org.cbioportal.web.parameter;
 
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.Size;
+
 public class NamespaceKeyIdentifier {
 
+    @Size(min = 1, max = PagingConstants.MAX_PAGE_SIZE)
     private String innerKey;
     private String outerKey;
 

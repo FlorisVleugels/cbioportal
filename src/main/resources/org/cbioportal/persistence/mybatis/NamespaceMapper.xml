@@ -14,7 +14,7 @@
         WHERE JSON_EXTRACT(ANNOTATION_JSON, CONCAT('$.', #{outerKey})) IS NOT NULL;
     </select>
 
-    <select id="getNamespaceCountByKeys" resultType="org.cbioportal.model.NamespaceCountByKeys">
+    <select id="getNamespaceDataCounts" resultType="org.cbioportal.model.NamespaceDataCount">
         SELECT JSON_UNQUOTE(JSON_EXTRACT(ANNOTATION_JSON, CONCAT('$.', #{outerKey}, '.', #{innerKey}))) AS #{innerKey}, COUNT(*) AS count
         FROM mutation
         GROUP BY JSON_UNQUOTE(JSON_EXTRACT(ANNOTATION_JSON, CONCAT('$.', #{outerKey}, '.', #{innerKey})));  

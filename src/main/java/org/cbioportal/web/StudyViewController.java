@@ -28,7 +28,7 @@ import org.cbioportal.model.ClinicalDataCountItem;
 import org.cbioportal.model.ClinicalEventTypeCount;
 import org.cbioportal.model.ClinicalViolinPlotData;
 import org.cbioportal.model.CopyNumberCountByGene;
-import org.cbioportal.model.NamespaceCountByKeys;
+import org.cbioportal.model.NamespaceDataCountItem;
 import org.cbioportal.model.DensityPlotBin;
 import org.cbioportal.model.DensityPlotData;
 import org.cbioportal.model.GenericAssayDataBin;
@@ -1227,17 +1227,19 @@ public class StudyViewController {
     }
 
     @PreAuthorize("hasPermission(#involvedCancerStudies, 'Collection<CancerStudyId>', T(org.cbioportal.utils.security.AccessLevel).READ)")
-    @RequestMapping(value = "/namespace-data-counts/fetch", method = RequestMethod.POST)
+    @RequestMapping(value = "/namespace-data-counts/fetch", method = RequestMethod.POST,
+        consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     @Operation(description = "Get Counts of selected Namespace Column by Study View Filter")
     @ApiResponse(responseCode = "200", description = "OK")
-    public ResponseEntity<List<NamespaceCountByKeys>> fetchNamespace(        
+    //content = @Content(array = @ArraySchema(schema = @Schema(implementation = GenomicDataCount.class))))
+    public ResponseEntity<List<NamespaceDataCountItem>> fetchNamespace(        
         @Parameter(required = true, description = "Outer and Inner json Key for Namespace Column")
-        @Size(min = 1, max = CLINICAL_TAB_MAX_PAGE_SIZE)
+        //@Size(min = 1, max = CLINICAL_TAB_MAX_PAGE_SIZE)
         @RequestBody NamespaceKeyIdentifier namespaceKeyIdentifier) {
 
         String outerKey = namespaceKeyIdentifier.getOuterKey();
         String innerKey = namespaceKeyIdentifier.getInnerKey();
 
-        return new ResponseEntity<>(studyViewService.fetchNamespaceCountByKeys(outerKey, innerKey), HttpStatus.OK);
+        return new ResponseEntity<>(studyViewService.fetchNamespaceDataCounts(outerKey, innerKey), HttpStatus.OK);
     }
 }

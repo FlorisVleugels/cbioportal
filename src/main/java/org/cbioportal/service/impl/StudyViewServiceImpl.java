@@ -21,7 +21,7 @@ import org.cbioportal.model.MolecularProfile;
 import org.cbioportal.model.MolecularProfileCaseIdentifier;
 import org.cbioportal.model.MutSig;
 import org.cbioportal.model.MutationFilterOption;
-import org.cbioportal.model.NamespaceCountByKeys;
+import org.cbioportal.model.NamespaceDataCount;
 import org.cbioportal.model.util.Select;
 import org.cbioportal.service.AlterationCountService;
 import org.cbioportal.service.NamespaceCountService;
@@ -145,7 +145,7 @@ public class StudyViewServiceImpl implements StudyViewService {
     }
 
     @Override
-    public List<NamespaceCountByKeys> fetchNamespaceCountByKeys(String outerKey, String innerKey) {
+    public List<NamespaceDataCount> fetchNamespaceDataCounts(String outerKey, String innerKey) {
 
 
         return null;
