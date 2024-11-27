@@ -5,18 +5,9 @@ import java.util.Objects;
 
 public class NamespaceDataCount implements Serializable {
 
-    private String label;
     private String value;
     private Integer count;
     private Integer uniqueCount;
-
-    public String getLabel() {
-        return label;
-    }
-
-    public void setLabel(String label) {
-        this.label = label;
-    }
 
     public String getValue() {
         return value;
@@ -43,11 +34,11 @@ public class NamespaceDataCount implements Serializable {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         NamespaceDataCount that = (NamespaceDataCount) o;
-        return Objects.equals(label, that.label) && Objects.equals(value, that.value) && Objects.equals(count, that.count) && Objects.equals(uniqueCount, that.uniqueCount);
+        return Objects.equals(value, that.value) && Objects.equals(count, that.count) && Objects.equals(uniqueCount, that.uniqueCount);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(label, value, count, uniqueCount);
+        return Objects.hash(value, count, uniqueCount);
     }
 }

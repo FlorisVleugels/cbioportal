@@ -28,7 +28,7 @@ import org.cbioportal.model.ClinicalDataCountItem;
 import org.cbioportal.model.ClinicalEventTypeCount;
 import org.cbioportal.model.ClinicalViolinPlotData;
 import org.cbioportal.model.CopyNumberCountByGene;
-import org.cbioportal.model.NamespaceDataCountItem;
+import org.cbioportal.model.NamespaceDataCount;
 import org.cbioportal.model.DensityPlotBin;
 import org.cbioportal.model.DensityPlotData;
 import org.cbioportal.model.GenericAssayDataBin;
@@ -1230,9 +1230,9 @@ public class StudyViewController {
     @RequestMapping(value = "/namespace-data-counts/fetch", method = RequestMethod.POST,
         consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     @Operation(description = "Get Counts of selected Namespace Column by Study View Filter")
-    @ApiResponse(responseCode = "200", description = "OK")
-    //content = @Content(array = @ArraySchema(schema = @Schema(implementation = GenomicDataCount.class))))
-    public ResponseEntity<List<NamespaceDataCountItem>> fetchNamespace(        
+    @ApiResponse(responseCode = "200", description = "OK",
+    content = @Content(array = @ArraySchema(schema = @Schema(implementation = NamespaceDataCount.class))))
+    public ResponseEntity<List<NamespaceDataCount>> fetchNamespace(        
         @Parameter(required = true, description = "Outer and Inner json Key for Namespace Column")
         //@Size(min = 1, max = CLINICAL_TAB_MAX_PAGE_SIZE)
         @RequestBody NamespaceKeyIdentifier namespaceKeyIdentifier) {

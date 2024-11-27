@@ -147,8 +147,9 @@ public class StudyViewServiceImpl implements StudyViewService {
     @Override
     public List<NamespaceDataCount> fetchNamespaceDataCounts(String outerKey, String innerKey) {
 
+        List<NamespaceDataCount> bla = namespaceCountService.fetchNamespaceDataCounts(outerKey, innerKey);
 
-        return null;
+        return bla;
     }
 
     @Override

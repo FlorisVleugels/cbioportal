@@ -1,6 +1,6 @@
 package org.cbioportal.service.impl;
 
-import org.cbioportal.model.NamespaceCountByKeys;
+import org.cbioportal.model.NamespaceDataCount;
 import org.cbioportal.persistence.NamespaceRepository;
 import org.cbioportal.service.NamespaceCountService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,9 +18,9 @@ public class NamespaceCountServiceImpl implements NamespaceCountService {
     private NamespaceRepository namespaceRepository;
 
     @Override
-    public List<NamespaceCountByKeys> fetchNamespaceCountByKeys(String outerKey, String innerKey) {
+    public List<NamespaceDataCount> fetchNamespaceDataCounts(String outerKey, String innerKey) {
 
-        List<NamespaceCountByKeys> counts = namespaceRepository.getNamespaceCountByKeys(outerKey, innerKey);
+        List<NamespaceDataCount> counts = namespaceRepository.getNamespaceDataCounts(outerKey, innerKey);
 
         return counts;
     }
