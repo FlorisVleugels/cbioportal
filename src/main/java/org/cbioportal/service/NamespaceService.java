@@ -7,4 +7,6 @@ import java.util.List;
 public interface NamespaceService {
 
     List<Namespace> fetchNamespaceKeys();
+
+    List<Namespace> fetchNamespaceKeysreal(List<String> studyIds, List<String> sampleIds);
 }

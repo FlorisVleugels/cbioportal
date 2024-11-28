@@ -57,12 +57,13 @@ public class NamespaceController {
     @PreAuthorize("hasPermission(#involvedCancerStudies, 'Collection<CancerStudyId>', T(org.cbioportal.utils.security.AccessLevel).READ)")
     @RequestMapping(value = "/namespaces/fetch", method = RequestMethod.POST)
     @Operation(description = "Fetch namespace columns")
-    @ApiResponse(responseCode = "200", description = "OK")
+    @ApiResponse(responseCode = "200", description = "OK",
+        content = @Content(array = @ArraySchema(schema = @Schema(implementation = Namespace.class))))
     public ResponseEntity<List<Namespace>> fetchNamespace() {
 
-        List <Namespace> Keyword = new ArrayList<>();
-        Keyword = namespaceService.fetchNamespaceKeys();
+        List <Namespace> namespaceKeys = new ArrayList<>();
+        namespaceKeys = namespaceService.fetchNamespaceKeys();
 
-        return new ResponseEntity<>(Keyword, HttpStatus.OK);
+        return new ResponseEntity<>(namespaceKeys, HttpStatus.OK);
     }
 }

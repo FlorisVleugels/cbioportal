@@ -29,6 +29,7 @@ import org.cbioportal.model.ClinicalEventTypeCount;
 import org.cbioportal.model.ClinicalViolinPlotData;
 import org.cbioportal.model.CopyNumberCountByGene;
 import org.cbioportal.model.NamespaceDataCount;
+import org.cbioportal.model.Namespace;
 import org.cbioportal.model.DensityPlotBin;
 import org.cbioportal.model.DensityPlotData;
 import org.cbioportal.model.GenericAssayDataBin;
@@ -296,6 +297,7 @@ public class StudyViewController {
         return new ResponseEntity<>(alterationCountByGenes, HttpStatus.OK);
     }
 
+
     @Cacheable(
         cacheResolver = "staticRepositoryCacheOneResolver",
         condition = "@cacheEnabledConfig.getEnabled() && #unfilteredQuery"
@@ -313,6 +315,44 @@ public class StudyViewController {
             alterationCountByGenes = studyViewService.getMutationAlterationCountByGenes(studyIds, sampleIds, annotationFilters);
         }
         return alterationCountByGenes;
+    }
+
+    @PreAuthorize("hasPermission(#involvedCancerStudies, 'Collection<CancerStudyId>', T(org.cbioportal.utils.security.AccessLevel).READ)")
+    @RequestMapping(value = "/namespaces-real/fetch", method = RequestMethod.POST,
+        consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    @Operation(description = "Fetch namespace columns")
+    @ApiResponse(responseCode = "200", description = "OK",
+        content = @Content(array = @ArraySchema(schema = @Schema(implementation = Namespace.class))))
+    public ResponseEntity<List<Namespace>> fetchNamespace(
+            @Parameter(required = true, description = "Study view filter")
+            @Valid @RequestBody(required = false) StudyViewFilter studyViewFilter,
+            @Parameter(hidden = true) // prevent reference to this attribute in the swagger-ui interface
+            @RequestAttribute(required = false, value = "involvedCancerStudies") Collection<String> involvedCancerStudies,
+            @Parameter(hidden = true) // prevent reference to this attribute in the swagger-ui interface. this attribute is needed for the @PreAuthorize tag above.
+            @Valid @RequestAttribute(required = false, value = "interceptedStudyViewFilter") StudyViewFilter interceptedStudyViewFilter
+    ) throws StudyNotFoundException {
+        boolean unfilteredQuery = studyViewFilterUtil.isUnfilteredQuery(interceptedStudyViewFilter);
+        List<Namespace> namespaceKeys = this.getInstance().cachedFetchNamespaces(interceptedStudyViewFilter,
+                unfilteredQuery);
+        return new ResponseEntity<>(namespaceKeys, HttpStatus.OK);
+    }
+
+    @Cacheable(
+        cacheResolver = "staticRepositoryCacheOneResolver",
+        condition = "@cacheEnabledConfig.getEnabled() && #unfilteredQuery"
+    )
+    public List<Namespace> cachedFetchNamespaces(StudyViewFilter interceptedStudyViewFilter,
+                                                               boolean unfilteredQuery) throws StudyNotFoundException {
+        
+        List<SampleIdentifier> sampleIdentifiers = studyViewFilterApplier.apply(interceptedStudyViewFilter);
+        List<Namespace> namespaceKeys = new ArrayList<>();
+        if(CollectionUtils.isNotEmpty(sampleIdentifiers)) {
+            List<String> studyIds = new ArrayList<>();
+            List<String> sampleIds = new ArrayList<>();
+            studyViewFilterUtil.extractStudyAndSampleIds(sampleIdentifiers, studyIds, sampleIds);
+            namespaceKeys = studyViewService.fetchNamespaceKeys(studyIds, sampleIds);
+        }
+        return namespaceKeys;
     }
 
     @PreAuthorize("hasPermission(#involvedCancerStudies, 'Collection<CancerStudyId>', T(org.cbioportal.utils.security.AccessLevel).READ)")

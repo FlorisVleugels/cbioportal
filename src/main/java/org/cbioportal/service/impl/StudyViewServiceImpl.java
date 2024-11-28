@@ -22,8 +22,10 @@ import org.cbioportal.model.MolecularProfileCaseIdentifier;
 import org.cbioportal.model.MutSig;
 import org.cbioportal.model.MutationFilterOption;
 import org.cbioportal.model.NamespaceDataCount;
+import org.cbioportal.model.Namespace;
 import org.cbioportal.model.util.Select;
 import org.cbioportal.service.AlterationCountService;
+import org.cbioportal.service.NamespaceService;
 import org.cbioportal.service.NamespaceCountService;
 import org.cbioportal.service.GenePanelService;
 import org.cbioportal.service.GeneService;
@@ -62,6 +64,7 @@ public class StudyViewServiceImpl implements StudyViewService {
     private final MolecularProfileUtil molecularProfileUtil;
     private final AlterationCountService alterationCountService;
     private final NamespaceCountService namespaceCountService;
+    private final NamespaceService namespaceService;
     private final SignificantlyMutatedGeneService significantlyMutatedGeneService;
     private final SignificantCopyNumberRegionService significantCopyNumberRegionService;
     private final GenericAssayService genericAssayService;
@@ -71,12 +74,13 @@ public class StudyViewServiceImpl implements StudyViewService {
 
     // constructor dependency injections
     @Autowired
-    public StudyViewServiceImpl(MolecularProfileService molecularProfileService, GenePanelService genePanelService, MolecularProfileUtil molecularProfileUtil, AlterationCountService alterationCountService, NamespaceCountService namespaceCountService, SignificantlyMutatedGeneService significantlyMutatedGeneService, SignificantCopyNumberRegionService significantCopyNumberRegionService, GenericAssayService genericAssayService, GeneService geneService, MolecularDataService molecularDataService, MutationService mutationService) {
+    public StudyViewServiceImpl(MolecularProfileService molecularProfileService, GenePanelService genePanelService, MolecularProfileUtil molecularProfileUtil, AlterationCountService alterationCountService, NamespaceCountService namespaceCountService, NamespaceService namespaceService, SignificantlyMutatedGeneService significantlyMutatedGeneService, SignificantCopyNumberRegionService significantCopyNumberRegionService, GenericAssayService genericAssayService, GeneService geneService, MolecularDataService molecularDataService, MutationService mutationService) {
         this.molecularProfileService = molecularProfileService;
         this.genePanelService = genePanelService;
         this.molecularProfileUtil = molecularProfileUtil;
         this.alterationCountService = alterationCountService;
-        this.namespaceCountService= namespaceCountService;
+        this.namespaceCountService = namespaceCountService;
+        this.namespaceService = namespaceService;
         this.significantlyMutatedGeneService = significantlyMutatedGeneService;
         this.significantCopyNumberRegionService = significantCopyNumberRegionService;
         this.genericAssayService = genericAssayService;
@@ -147,9 +151,17 @@ public class StudyViewServiceImpl implements StudyViewService {
     @Override
     public List<NamespaceDataCount> fetchNamespaceDataCounts(String outerKey, String innerKey) {
 
-        List<NamespaceDataCount> bla = namespaceCountService.fetchNamespaceDataCounts(outerKey, innerKey);
+        List<NamespaceDataCount> namespaceCounts = namespaceCountService.fetchNamespaceDataCounts(outerKey, innerKey);
 
-        return bla;
+        return namespaceCounts;
+    }
+
+    @Override
+    public List<Namespace> fetchNamespaceKeys(List<String> studyIds, List<String> sampleIds) {
+
+        List<Namespace> namespaceKeys = namespaceService.fetchNamespaceKeysreal(studyIds, sampleIds);
+
+        return namespaceKeys;
     }
 
     @Override
