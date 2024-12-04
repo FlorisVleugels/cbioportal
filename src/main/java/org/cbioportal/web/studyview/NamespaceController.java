@@ -58,12 +58,12 @@ public class NamespaceController {
     @RequestMapping(value = "/namespaces/fetch", method = RequestMethod.POST)
     @Operation(description = "Fetch namespace columns")
     @ApiResponse(responseCode = "200", description = "OK",
-        content = @Content(array = @ArraySchema(schema = @Schema(implementation = Namespace.class))))
-    public ResponseEntity<List<Namespace>> fetchNamespace() {
+    content = @Content(array = @ArraySchema(schema = @Schema(implementation = Namespace.class))))
+    public ResponseEntity<List<Namespace>> fetchNamespace(
+        @Parameter(required = true, description = "List of Study IDs")
+        //@Size(min = 1, max = PagingConstants.MAX_PAGE_SIZE)
+        @RequestBody List<String> studyIds) {
 
-        List <Namespace> namespaceKeys = new ArrayList<>();
-        namespaceKeys = namespaceService.fetchNamespaceKeys();
-
-        return new ResponseEntity<>(namespaceKeys, HttpStatus.OK);
+        return new ResponseEntity<>(namespaceService.fetchNamespaceKeys(studyIds), HttpStatus.OK);
     }
 }

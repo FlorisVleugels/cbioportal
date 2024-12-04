@@ -9,9 +9,11 @@ import java.util.List;
 public interface NamespaceRepository {
 
     // @Cacheable(cacheResolver = "generalRepositoryCacheResolver", condition = "@cacheEnabledConfig.getEnabled()")
-    List<Namespace> getNamespaceOuterKey();
+    List<Namespace> getNamespaceOuterKey(List<String> studyIds);
+    List<Namespace> getNamespaceInnerKey(String outerKey, List<String> studyIds);
 
-    List<Namespace> getNamespaceInnerKey(String outerKey);
+    List<Namespace> getNamespaceOuterKeyReal(List<String> studyIds);
+    List<Namespace> getNamespaceInnerKeyReal(String outerKey, List<String> studyIds);
 
     List<NamespaceDataCount> getNamespaceDataCounts(String outerKey, String innerKey);
 }

@@ -3,15 +3,44 @@
 
 <mapper namespace="org.cbioportal.persistence.mybatis.NamespaceMapper">
 
+    <sql id="join">
+        INNER JOIN sample ON mutation.SAMPLE_ID = sample.INTERNAL_ID
+        INNER JOIN patient ON sample.PATIENT_ID = patient.INTERNAL_ID
+        INNER JOIN cancer_study ON patient.CANCER_STUDY_ID = cancer_study.CANCER_STUDY_ID
+    </sql>
+
     <select id="getNamespaceOuterKey" resultType="org.cbioportal.model.Namespace">
         SELECT DISTINCT JSON_KEYS(ANNOTATION_JSON) AS outerKey 
-        FROM mutation;
+        FROM mutation
+        <include refid="join"/>
+        <if test="studyIds != null">
+            WHERE cancer_study.CANCER_STUDY_IDENTIFIER IN
+            <if test="studyIds.isEmpty()">
+                (NULL)
+            </if>
+            <if test="!studyIds.isEmpty()">
+                <foreach item="item" collection="studyIds" open="(" separator="," close=")">
+                    #{item}
+                </foreach>
+            </if>
+        </if>
     </select>
 
     <select id="getNamespaceInnerKey" resultType="org.cbioportal.model.Namespace">
         SELECT DISTINCT JSON_KEYS(JSON_EXTRACT(ANNOTATION_JSON, CONCAT('$.', #{outerKey}))) AS innerKey
         FROM mutation
-        WHERE JSON_EXTRACT(ANNOTATION_JSON, CONCAT('$.', #{outerKey})) IS NOT NULL;
+        <include refid="join"/>
+        <if test="studyIds != null">
+            WHERE cancer_study.CANCER_STUDY_IDENTIFIER IN
+            <if test="studyIds.isEmpty()">
+                (NULL)
+            </if>
+            <if test="!studyIds.isEmpty()">
+                <foreach item="item" collection="studyIds" open="(" separator="," close=")">
+                    #{item}
+                </foreach>
+            </if>
+        </if>
     </select>
 
     <select id="getNamespaceDataCounts" resultType="org.cbioportal.model.NamespaceDataCount">

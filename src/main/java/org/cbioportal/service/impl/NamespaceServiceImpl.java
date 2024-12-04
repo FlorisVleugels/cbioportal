@@ -18,10 +18,10 @@ public class NamespaceServiceImpl implements NamespaceService {
     private NamespaceRepository namespaceRepository;
 
     @Override
-    public List<Namespace> fetchNamespaceKeys() {
+    public List<Namespace> fetchNamespaceKeys(List<String> studyIds) {
         ObjectMapper objectMapper = new ObjectMapper();
 
-        List<Namespace> outerKeys = namespaceRepository.getNamespaceOuterKey();
+        List<Namespace> outerKeys = namespaceRepository.getNamespaceOuterKey(studyIds);
         List<Namespace> combinedNamespaces = new ArrayList<>();
 
         for (Namespace outerNamespaceKey : outerKeys) {
@@ -32,47 +32,7 @@ public class NamespaceServiceImpl implements NamespaceService {
 
             for (String outerKey : outerKeyList) {
                 // Fetch inner keys for each outer key
-                List<Namespace> innerKeys = namespaceRepository.getNamespaceInnerKey(outerKey);
-
-                for (Namespace innerNamespaceKey : innerKeys) {
-                    // Parse the JSON string in innerKey to extract individual keys
-                    String innerKeyJson = innerNamespaceKey.getInnerKey();
-                    List<String> innerKeyList = objectMapper.readValue(innerKeyJson, new TypeReference<List<String>>() {});
-
-                    for (String innerKey : innerKeyList) {
-                        // Create a new Namespace object for each innerKey
-                        Namespace unpackedNamespace = new Namespace();
-                        unpackedNamespace.setOuterKey(outerKey);
-                        unpackedNamespace.setInnerKey(innerKey);
-
-                        combinedNamespaces.add(unpackedNamespace);
-                    }
-                }
-            }
-        } catch (Exception e) {
-            System.err.println("Failed to parse keys for outer key: " + outerNamespaceKey.getOuterKey());
-            e.printStackTrace();
-        }
-    }
-
-        return combinedNamespaces;
-    }
-
-    public List<Namespace> fetchNamespaceKeysreal(List<String> studyIds, List<String> sampleIds) {
-        ObjectMapper objectMapper = new ObjectMapper();
-
-        List<Namespace> outerKeys = namespaceRepository.getNamespaceOuterKey();
-        List<Namespace> combinedNamespaces = new ArrayList<>();
-
-        for (Namespace outerNamespaceKey : outerKeys) {
-        try {
-            // Parse the JSON string in outerKey to extract actual keys
-            String outerKeyJson = outerNamespaceKey.getOuterKey();
-            List<String> outerKeyList = objectMapper.readValue(outerKeyJson, new TypeReference<List<String>>() {});
-
-            for (String outerKey : outerKeyList) {
-                // Fetch inner keys for each outer key
-                List<Namespace> innerKeys = namespaceRepository.getNamespaceInnerKey(outerKey);
+                List<Namespace> innerKeys = namespaceRepository.getNamespaceInnerKey(outerKey, studyIds);
 
                 for (Namespace innerNamespaceKey : innerKeys) {
                     // Parse the JSON string in innerKey to extract individual keys

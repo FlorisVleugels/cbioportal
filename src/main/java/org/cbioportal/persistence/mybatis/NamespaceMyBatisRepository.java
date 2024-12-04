@@ -16,15 +16,27 @@ public class NamespaceMyBatisRepository implements NamespaceRepository {
     private NamespaceMapper namespaceMapper;
 
     @Override
-    public List<Namespace> getNamespaceOuterKey() {
+    public List<Namespace> getNamespaceOuterKey(List<String> studyIds) {
 
-        return namespaceMapper.getNamespaceOuterKey();
+        return namespaceMapper.getNamespaceOuterKey(studyIds);
     }
 
     @Override
-    public List<Namespace> getNamespaceInnerKey(String outerKey) {
+    public List<Namespace> getNamespaceInnerKey(String outerKey, List<String> studyIds) {
 
-        return namespaceMapper.getNamespaceInnerKey(outerKey);
+        return namespaceMapper.getNamespaceInnerKey(outerKey, studyIds);
+    }
+
+    @Override
+    public List<Namespace> getNamespaceOuterKeyReal(List<String> studyIds) {
+
+        return namespaceMapper.getNamespaceOuterKeyReal(studyIds);
+    }
+
+    @Override
+    public List<Namespace> getNamespaceInnerKeyReal(String outerKey, List<String> studyIds) {
+
+        return namespaceMapper.getNamespaceInnerKeyReal(outerKey, studyIds);
     }
 
     @Override
