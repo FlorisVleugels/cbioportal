@@ -28,18 +28,6 @@ public class NamespaceMyBatisRepository implements NamespaceRepository {
     }
 
     @Override
-    public List<Namespace> getNamespaceOuterKeyReal(List<String> studyIds) {
-
-        return namespaceMapper.getNamespaceOuterKeyReal(studyIds);
-    }
-
-    @Override
-    public List<Namespace> getNamespaceInnerKeyReal(String outerKey, List<String> studyIds) {
-
-        return namespaceMapper.getNamespaceInnerKeyReal(outerKey, studyIds);
-    }
-
-    @Override
     public List<NamespaceDataCount> getNamespaceDataCounts(String outerKey, String innerKey) {
 
         return namespaceMapper.getNamespaceDataCounts(outerKey, innerKey);
