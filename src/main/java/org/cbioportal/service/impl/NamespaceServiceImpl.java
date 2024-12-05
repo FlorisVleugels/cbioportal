@@ -26,27 +26,23 @@ public class NamespaceServiceImpl implements NamespaceService {
 
         for (Namespace outerNamespaceKey : outerKeys) {
         try {
-            // Parse the JSON string in outerKey to extract actual keys
+
             String outerKeyJson = outerNamespaceKey.getOuterKey();
             List<String> outerKeyList = objectMapper.readValue(outerKeyJson, new TypeReference<List<String>>() {});
 
             for (String outerKey : outerKeyList) {
-                // Fetch inner keys for each outer key
+
                 List<Namespace> innerKeys = namespaceRepository.getNamespaceInnerKey(outerKey, studyIds);
 
                 for (Namespace innerNamespaceKey : innerKeys) {
-                    // Parse the JSON string in innerKey to extract individual keys
-                    String innerKeyJson = innerNamespaceKey.getInnerKey();
+
+                    String innerKeyJson = innerNamespaceKey.getInnerKeyJson();
                     List<String> innerKeyList = objectMapper.readValue(innerKeyJson, new TypeReference<List<String>>() {});
 
-                    for (String innerKey : innerKeyList) {
-                        // Create a new Namespace object for each innerKey
-                        Namespace unpackedNamespace = new Namespace();
-                        unpackedNamespace.setOuterKey(outerKey);
-                        unpackedNamespace.setInnerKey(innerKey);
-
-                        combinedNamespaces.add(unpackedNamespace);
-                    }
+                    Namespace unpackedNamespace = new Namespace();
+                    unpackedNamespace.setOuterKey(outerKey);
+                    unpackedNamespace.setInnerKey(innerKeyList);
+                    combinedNamespaces.add(unpackedNamespace);
                 }
             }
         } catch (Exception e) {

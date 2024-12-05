@@ -27,7 +27,7 @@
     </select>
 
     <select id="getNamespaceInnerKey" resultType="org.cbioportal.model.Namespace">
-        SELECT DISTINCT JSON_KEYS(JSON_EXTRACT(ANNOTATION_JSON, CONCAT('$.', #{outerKey}))) AS innerKey
+        SELECT DISTINCT JSON_KEYS(JSON_EXTRACT(ANNOTATION_JSON, CONCAT('$.', #{outerKey}))) AS innerKeyJson
         FROM mutation
         <include refid="join"/>
         <if test="studyIds != null">
