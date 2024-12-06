@@ -41,6 +41,7 @@ public class StudyViewFilter implements Serializable {
     private AlterationFilter alterationFilter;
     private List<DataFilter> clinicalEventFilters;
     private List<MutationDataFilter> mutationDataFilters;
+    private List<NamespaceDataFilter> namespaceDataFilters;
     
     @AssertTrue
     private boolean isEitherSampleIdentifiersOrStudyIdsPresent() {
@@ -66,6 +67,11 @@ public class StudyViewFilter implements Serializable {
     private boolean isEitherValueOrRangePresentInCustomDataFilters() {
         return validateDataFilters(customDataFilters);
     }
+
+    //@AssertTrue
+    //private boolean isEitherValueOrRangePresentInNamespaceDataFilters() {
+        //return validateDataFilters(namespaceDataFilters);
+    //}
 
     private <T extends DataFilter> boolean validateDataFilters(List<T> dataFilters) {
         long invalidCount = 0;
@@ -229,5 +235,13 @@ public class StudyViewFilter implements Serializable {
 
     public void setMutationDataFilters(List<MutationDataFilter> mutationDataFilters) {
         this.mutationDataFilters = mutationDataFilters;
+    }
+
+    public List<NamespaceDataFilter> getNamespaceDataFilters() {
+        return namespaceDataFilters;
+    }
+
+    public void setNamespaceDataFilters(List<NamespaceDataFilter> namespaceDataFilters) {
+        this.namespaceDataFilters = namespaceDataFilters;
     }
 }

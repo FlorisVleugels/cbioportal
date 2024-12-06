@@ -1,11 +1,10 @@
 package org.cbioportal.web.parameter;
 
-import jakarta.validation.Valid;
-import jakarta.validation.constraints.Size;
+import java.io.Serializable;
+import java.util.List;
 
-public class NamespaceKeyIdentifier {
+public class NamespaceDataFilter extends DataFilter implements Serializable {
 
-    @Size(min = 1, max = PagingConstants.MAX_PAGE_SIZE)
     private String innerKey;
     private String outerKey;
 

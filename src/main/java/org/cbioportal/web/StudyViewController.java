@@ -54,6 +54,7 @@ import org.cbioportal.web.config.annotation.InternalApi;
 import org.cbioportal.web.parameter.ClinicalDataBinCountFilter;
 import org.cbioportal.web.parameter.ClinicalDataBinFilter;
 import org.cbioportal.web.parameter.ClinicalDataCountFilter;
+import org.cbioportal.web.parameter.NamespaceDataCountFilter;
 import org.cbioportal.web.parameter.ClinicalDataFilter;
 import org.cbioportal.web.parameter.DataBinMethod;
 import org.cbioportal.web.parameter.Direction;
@@ -68,7 +69,6 @@ import org.cbioportal.web.parameter.MutationOption;
 import org.cbioportal.web.parameter.PagingConstants;
 import org.cbioportal.web.parameter.Projection;
 import org.cbioportal.web.parameter.SampleIdentifier;
-import org.cbioportal.web.parameter.NamespaceKeyIdentifier;
 import org.cbioportal.web.parameter.StudyViewFilter;
 import org.cbioportal.web.util.ClinicalDataBinUtil;
 import org.cbioportal.web.util.ClinicalDataFetcher;
@@ -1268,17 +1268,18 @@ public class StudyViewController {
     @PreAuthorize("hasPermission(#involvedCancerStudies, 'Collection<CancerStudyId>', T(org.cbioportal.utils.security.AccessLevel).READ)")
     @RequestMapping(value = "/namespace-data-counts/fetch", method = RequestMethod.POST,
         consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    @Operation(description = "Get Counts of selected Namespace Column by Study View Filter")
+    @Operation(description = "Fetch namespace data counts by study view filter")
     @ApiResponse(responseCode = "200", description = "OK",
     content = @Content(array = @ArraySchema(schema = @Schema(implementation = NamespaceDataCount.class))))
     public ResponseEntity<List<NamespaceDataCount>> fetchNamespace(        
-        @Parameter(required = true, description = "Outer and Inner json Key for Namespace Column")
+        @Parameter(required = true)
         //@Size(min = 1, max = CLINICAL_TAB_MAX_PAGE_SIZE)
-        @RequestBody NamespaceKeyIdentifier namespaceKeyIdentifier) {
+        @RequestBody NamespaceDataCountFilter namespaceDataCountFilter) {
 
-        String outerKey = namespaceKeyIdentifier.getOuterKey();
-        String innerKey = namespaceKeyIdentifier.getInnerKey();
+        //String outerKey = namespaceDataCountFilter.getOuterKey();
+        //String innerKey = namespaceDataCountFilter.getInnerKey();
 
-        return new ResponseEntity<>(studyViewService.fetchNamespaceDataCounts(outerKey, innerKey), HttpStatus.OK);
+        //return new ResponseEntity<>(studyViewService.fetchNamespaceDataCounts(outerKey, innerKey), HttpStatus.OK);
+        return null;
     }
 }

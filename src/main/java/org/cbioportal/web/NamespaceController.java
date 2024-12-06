@@ -14,15 +14,14 @@ import org.cbioportal.model.Namespace;
 import org.cbioportal.model.meta.MutationMeta;
 import org.cbioportal.service.NamespaceService;
 import org.cbioportal.service.exception.MolecularProfileNotFoundException;
-import org.cbioportal.web.config.InternalApiTags;
-import org.cbioportal.web.config.annotation.InternalApi;
+import org.cbioportal.web.config.PublicApiTags;
+import org.cbioportal.web.config.annotation.PublicApi;
 import org.cbioportal.web.parameter.Direction;
 import org.cbioportal.web.parameter.HeaderKeyConstants;
 import org.cbioportal.web.parameter.MutationFilter;
 import org.cbioportal.web.parameter.MutationMultipleStudyFilter;
 import org.cbioportal.web.parameter.PagingConstants;
 import org.cbioportal.web.parameter.Projection;
-import org.cbioportal.web.parameter.SampleMolecularIdentifier;
 import org.cbioportal.web.parameter.sort.MutationSortBy;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
@@ -44,11 +43,11 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
-@InternalApi
+@PublicApi
 @RestController()
 @RequestMapping("/api")
 @Validated
-@Tag(name = InternalApiTags.NAMESPACES, description = " ")
+@Tag(name = PublicApiTags.NAMESPACES, description = " ")
 public class NamespaceController {
 
     @Autowired
