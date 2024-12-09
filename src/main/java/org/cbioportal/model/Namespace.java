@@ -1,21 +1,11 @@
 package org.cbioportal.model;
 
 import java.io.Serializable;
-import java.util.List;
 
 public class Namespace implements Serializable {
     
     private String outerKey;
-    private String innerKeyJson;
-    private List<String> innerKey;
-
-    public String getInnerKeyJson() {
-        return innerKeyJson;
-    }
-
-    public void setInnerKeyJson(String innerKeyJson) {
-        this.innerKeyJson = innerKeyJson;
-    }
+    private String innerKey;
     
     public String getOuterKey() {
         return outerKey;
@@ -25,11 +15,11 @@ public class Namespace implements Serializable {
         this.outerKey = outerKey;
     }
 
-    public List<String> getInnerKey() {
+    public String getInnerKey() {
         return innerKey;
     }
 
-    public void setInnerKey(List<String> innerKey) {
+    public void setInnerKey(String innerKey) {
         this.innerKey = innerKey;
     }
 }
