@@ -3,16 +3,39 @@
 
 <mapper namespace="org.cbioportal.persistence.mybatis.NamespaceMapper">
 
-    <sql id="join">
+    <sql id="joinSample">
         INNER JOIN sample ON mutation.SAMPLE_ID = sample.INTERNAL_ID
         INNER JOIN patient ON sample.PATIENT_ID = patient.INTERNAL_ID
         INNER JOIN cancer_study ON patient.CANCER_STUDY_ID = cancer_study.CANCER_STUDY_ID
     </sql>
 
+    <sql id="whereSample">
+        <where>
+            <if test="sampleIds == null">
+                cancer_study.CANCER_STUDY_IDENTIFIER = #{studyIds[0]}
+            </if>
+            <if test="sampleIds != null">
+                <if test="@java.util.Arrays@stream(studyIds.toArray()).distinct().count() == 1">
+                    cancer_study.CANCER_STUDY_IDENTIFIER = #{studyIds[0]} AND
+                    sample.STABLE_ID IN
+                    <foreach item="item" collection="sampleIds" open="(" separator="," close=")">
+                        #{item}
+                    </foreach>
+                </if>
+                <if test="@java.util.Arrays@stream(studyIds.toArray()).distinct().count() > 1">
+                    (cancer_study.CANCER_STUDY_IDENTIFIER, sample.STABLE_ID) IN
+                    <foreach index="i" collection="sampleIds" open="(" separator="," close=")">
+                        (#{studyIds[${i}]}, #{sampleIds[${i}]})
+                    </foreach>
+                </if>
+            </if>
+        </where>
+    </sql>
+
     <select id="getNamespaceOuterKey" resultType="org.cbioportal.model.Namespace">
         SELECT DISTINCT JSON_KEYS(ANNOTATION_JSON) AS outerKey 
         FROM mutation
-        <include refid="join"/>
+        <include refid="joinSample"/>
         <if test="studyIds != null">
             WHERE cancer_study.CANCER_STUDY_IDENTIFIER IN
             <if test="studyIds.isEmpty()">
@@ -29,7 +52,7 @@
     <select id="getNamespaceInnerKey" resultType="org.cbioportal.model.Namespace">
         SELECT DISTINCT JSON_KEYS(JSON_EXTRACT(ANNOTATION_JSON, CONCAT('$.', #{outerKey}))) AS innerKey
         FROM mutation
-        <include refid="join"/>
+        <include refid="joinSample"/>
         <if test="studyIds != null">
             WHERE cancer_study.CANCER_STUDY_IDENTIFIER IN
             <if test="studyIds.isEmpty()">
@@ -42,6 +65,17 @@
             </if>
             AND JSON_EXTRACT(ANNOTATION_JSON, CONCAT('$.', #{outerKey})) IS NOT NULL;
         </if>
+    </select>
+
+    <select id="getNamespaceAttributeCountsBySampleIds" resultType="org.cbioportal.model.NamespaceAttributeCount">
+        SELECT count(*) as "count",
+        #{outerKey} as "outerKey",
+        #{innerKey} as "innerKey"
+        FROM mutation
+        <include refid="joinSample"/>
+        <include refid="whereSample"/>
+        and JSON_EXTRACT(ANNOTATION_JSON, CONCAT('$.', #{outerKey}, '.', #{innerKey})) IS NOT NULL 
+        and JSON_UNQUOTE(JSON_EXTRACT(ANNOTATION_JSON, CONCAT('$.', #{outerKey}, '.', #{innerKey}))) != 'null';
     </select>
 
     <select id="getNamespaceDataCounts" resultType="org.cbioportal.model.NamespaceDataCount">

@@ -5,22 +5,14 @@ import java.util.List;
 
 public class NamespaceDataFilter extends DataFilter implements Serializable {
 
-    private String innerKey;
-    private String outerKey;
+    private NamespaceIdentifier attributeId;
 
-    public String getOuterKey() {
-        return outerKey;
+    public NamespaceIdentifier getAttributes() {
+        return attributeId;
     }
 
-    public void setOuterKey(String outerKey) {
-        this.outerKey = outerKey;
+    public void setAttributes(NamespaceIdentifier attributeId) {
+        this.attributeId = attributeId;
     }
 
-    public String getInnerKey() {
-        return innerKey;
-    }
-
-    public void setInnerKey(String innerKey) {
-        this.innerKey = innerKey;
-    }
 }
