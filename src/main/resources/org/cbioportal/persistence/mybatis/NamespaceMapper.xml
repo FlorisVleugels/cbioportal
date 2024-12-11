@@ -68,7 +68,7 @@
     </select>
 
     <select id="getNamespaceAttributeCountsBySampleIds" resultType="org.cbioportal.model.NamespaceAttributeCount">
-        SELECT count(*) as "count",
+        SELECT count(distinct(SAMPLE_ID)) as "count",
         #{outerKey} as "outerKey",
         #{innerKey} as "innerKey"
         FROM mutation
