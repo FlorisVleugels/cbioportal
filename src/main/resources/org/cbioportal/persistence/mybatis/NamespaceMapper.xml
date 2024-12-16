@@ -83,6 +83,8 @@
             JSON_UNQUOTE(JSON_EXTRACT(ANNOTATION_JSON, CONCAT('$.', #{outerKey}, '.', #{innerKey}))) AS value,
             JSON_UNQUOTE(JSON_EXTRACT(ANNOTATION_JSON, CONCAT('$.', #{outerKey}, '.', #{innerKey}))) AS #{innerKey},
             COUNT(*) AS count
+        <include refid="joinSample"/>
+        <include refid="whereSample"/>
         FROM mutation
         GROUP BY value;
     </select>

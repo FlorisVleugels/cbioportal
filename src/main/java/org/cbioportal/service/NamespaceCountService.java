@@ -1,10 +1,10 @@
 package org.cbioportal.service;
 
-import org.cbioportal.model.NamespaceDataCount;
+import org.cbioportal.model.NamespaceDataCountItem;
 
 import java.util.List;
 
 public interface NamespaceCountService {
     
-    List<NamespaceDataCount> fetchNamespaceDataCounts(String outerKey, String innerKey);
+    NamespaceDataCountItem fetchNamespaceDataCounts(List<String> studyIds, List<String> sampleIds, String outerKey, String innerKey);
 }

@@ -28,7 +28,7 @@ import org.cbioportal.model.ClinicalDataCountItem;
 import org.cbioportal.model.ClinicalEventTypeCount;
 import org.cbioportal.model.ClinicalViolinPlotData;
 import org.cbioportal.model.CopyNumberCountByGene;
-import org.cbioportal.model.NamespaceDataCount;
+import org.cbioportal.model.NamespaceDataCountItem;
 import org.cbioportal.model.DensityPlotBin;
 import org.cbioportal.model.DensityPlotData;
 import org.cbioportal.model.GenericAssayDataBin;
@@ -42,6 +42,7 @@ import org.cbioportal.model.SampleClinicalDataCollection;
 import org.cbioportal.model.SampleList;
 import org.cbioportal.service.ClinicalAttributeService;
 import org.cbioportal.service.ClinicalDataService;
+import org.cbioportal.service.NamespaceCountService;
 import org.cbioportal.service.ClinicalEventService;
 import org.cbioportal.service.PatientService;
 import org.cbioportal.service.SampleListService;
@@ -55,6 +56,7 @@ import org.cbioportal.web.parameter.ClinicalDataBinCountFilter;
 import org.cbioportal.web.parameter.ClinicalDataBinFilter;
 import org.cbioportal.web.parameter.ClinicalDataCountFilter;
 import org.cbioportal.web.parameter.NamespaceDataCountFilter;
+import org.cbioportal.web.parameter.NamespaceDataFilter;
 import org.cbioportal.web.parameter.ClinicalDataFilter;
 import org.cbioportal.web.parameter.DataBinMethod;
 import org.cbioportal.web.parameter.Direction;
@@ -140,6 +142,8 @@ public class StudyViewController {
     private ClinicalDataBinUtil clinicalDataBinUtil;
     @Autowired
     private ClinicalEventService clinicalEventService;
+    @Autowired
+    private NamespaceCountService namespaceDataService;
 
     private StudyViewController getInstance() {
         if (Objects.isNull(instance)) {
@@ -1270,16 +1274,44 @@ public class StudyViewController {
         consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     @Operation(description = "Fetch namespace data counts by study view filter")
     @ApiResponse(responseCode = "200", description = "OK",
-    content = @Content(array = @ArraySchema(schema = @Schema(implementation = NamespaceDataCount.class))))
-    public ResponseEntity<List<NamespaceDataCount>> fetchNamespace(        
-        @Parameter(required = true)
-        //@Size(min = 1, max = CLINICAL_TAB_MAX_PAGE_SIZE)
-        @RequestBody NamespaceDataCountFilter namespaceDataCountFilter) {
+        content = @Content(array = @ArraySchema(schema = @Schema(implementation = NamespaceDataCountItem.class))))
+    public ResponseEntity<List<NamespaceDataCountItem>> fetchNamespaceDataCounts(
+        @Parameter(required = true, description = "Namespace data count filter")
+        @Valid @RequestBody(required = false)  NamespaceDataCountFilter namespaceDataCountFilter,
+        @Parameter(hidden = true) // prevent reference to this attribute in the swagger-ui interface
+        @RequestAttribute(required = false, value = "involvedCancerStudies") Collection<String> involvedCancerStudies,
+        @Parameter(required = true, description = "Intercepted Namespace Data Count Filter")
+        @Valid @RequestAttribute(required = false, value = "interceptedNamespaceDataCountFilter") NamespaceDataCountFilter interceptedNamespaceDataCountFilter) 
+        throws StudyNotFoundException {
 
-        //String outerKey = namespaceDataCountFilter.getOuterKey();
-        //String innerKey = namespaceDataCountFilter.getInnerKey();
+        List<NamespaceDataFilter> namespaceDataFilters = interceptedNamespaceDataCountFilter.getNamespaceDataFilters();
+        StudyViewFilter studyViewFilter = interceptedNamespaceDataCountFilter.getStudyViewFilter();
+        // when there is only one filter, it means study view is doing a single chart filter operation
+        // remove filter from studyViewFilter to return all data counts
+        // the reason we do this is to make sure after chart get filtered, user can still see unselected portion of the chart
+        if (namespaceDataFilters.size() == 1) {
+            studyViewFilterUtil.removeSelfFromNamespaceDataFilter(
+                namespaceDataFilters.get(0).getOuterKey(), 
+                namespaceDataFilters.get(0).getInnerKey(), 
+                studyViewFilter);
+        }
 
-        //return new ResponseEntity<>(studyViewService.fetchNamespaceDataCounts(outerKey, innerKey), HttpStatus.OK);
-        return null;
+        List<SampleIdentifier> filteredSampleIdentifiers = studyViewFilterApplier.apply(studyViewFilter);
+
+        if (filteredSampleIdentifiers.isEmpty()) {
+            return new ResponseEntity<>(new ArrayList<>(), HttpStatus.OK);
+        }
+        
+        List<String> studyIds = new ArrayList<>();
+        List<String> sampleIds = new ArrayList<>();
+        studyViewFilterUtil.extractStudyAndSampleIds(filteredSampleIdentifiers, studyIds, sampleIds);
+        
+        List<NamespaceDataCountItem> result = studyViewService.fetchNamespaceDataCounts(
+            studyIds,
+            sampleIds,
+            namespaceDataFilters.stream().map(namespaceDataFilter -> new Pair<>(namespaceDataFilter.getOuterKey(), namespaceDataFilter.getInnerKey())).collect(Collectors.toList()));
+
+        return new ResponseEntity<>(result, HttpStatus.OK);
     }
+
 }

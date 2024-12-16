@@ -77,6 +77,7 @@ public class StudyViewFilterUtil {
         }
     }
 
+
     public void removeSelfFromMutationDataFilter(String hugoGeneSymbol, String profileType, MutationOption categorization, StudyViewFilter studyViewFilter) {
         if (studyViewFilter != null && studyViewFilter.getMutationDataFilters() != null) {
             studyViewFilter.getMutationDataFilters().removeIf(f ->
@@ -84,6 +85,14 @@ public class StudyViewFilterUtil {
                     f.getProfileType().equals(profileType) &&
                     f.getCategorization().equals(categorization)
             );
+        }
+    }
+
+    public void removeSelfFromNamespaceDataFilter(String outerKey, String innerKey, StudyViewFilter studyViewFilter) {
+        if (studyViewFilter != null && studyViewFilter.getNamespaceDataFilters() != null) {
+            studyViewFilter.getNamespaceDataFilters().removeIf(f ->
+                    f.getOuterKey().equals(outerKey) && f.getInnerKey().equals(innerKey)
+                    );
         }
     }
 

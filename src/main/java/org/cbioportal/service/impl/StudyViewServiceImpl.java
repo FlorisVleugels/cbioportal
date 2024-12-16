@@ -22,6 +22,7 @@ import org.cbioportal.model.MolecularProfileCaseIdentifier;
 import org.cbioportal.model.MutSig;
 import org.cbioportal.model.MutationFilterOption;
 import org.cbioportal.model.NamespaceDataCount;
+import org.cbioportal.model.NamespaceDataCountItem;
 import org.cbioportal.model.util.Select;
 import org.cbioportal.service.AlterationCountService;
 import org.cbioportal.service.NamespaceCountService;
@@ -145,12 +146,22 @@ public class StudyViewServiceImpl implements StudyViewService {
     }
 
     @Override
-    public List<NamespaceDataCount> fetchNamespaceDataCounts(String outerKey, String innerKey) {
+    public List<NamespaceDataCountItem> fetchNamespaceDataCounts(List<String> studyIds,
+                                                                 List<String> sampleIds,
+                                                                 List<Pair<String, String>> namespaceDataFilters) {
 
-        List<NamespaceDataCount> namespaceCounts = namespaceCountService.fetchNamespaceDataCounts(outerKey, innerKey);
+        return namespaceDataFilters
+            .stream()
+            .flatMap(namespaceDataFilter -> {
+                String outerKey = namespaceDataFilter.getKey();
+                String innerKey = namespaceDataFilter.getValue();
 
-        return namespaceCounts;
+                NamespaceDataCountItem namespaceDataCountItem = namespaceCountService.fetchNamespaceDataCounts(studyIds, sampleIds, outerKey,
+                                                                                                               innerKey);
+                return Stream.ofNullable(namespaceDataCountItem);
+            }).toList();
     }
+
 
     @Override
     public List<GenomicDataCountItem> getMutationCountsByGeneSpecific(List<String> studyIds,
