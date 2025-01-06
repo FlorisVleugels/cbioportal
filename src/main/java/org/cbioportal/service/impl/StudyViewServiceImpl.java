@@ -156,7 +156,7 @@ public class StudyViewServiceImpl implements StudyViewService {
                 String outerKey = namespaceDataFilter.getKey();
                 String innerKey = namespaceDataFilter.getValue();
 
-                NamespaceDataCountItem namespaceDataCountItem = namespaceCountService.fetchNamespaceDataCounts(studyIds, sampleIds, outerKey,
+                List<NamespaceDataCount> namespaceDataCountItem = namespaceCountService.fetchNamespaceDataCounts(studyIds, sampleIds, outerKey,
                                                                                                                innerKey);
                 return Stream.ofNullable(namespaceDataCountItem);
             }).toList();

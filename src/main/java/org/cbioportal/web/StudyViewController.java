@@ -1280,15 +1280,12 @@ public class StudyViewController {
         @Valid @RequestBody(required = false)  NamespaceDataCountFilter namespaceDataCountFilter,
         @Parameter(hidden = true) // prevent reference to this attribute in the swagger-ui interface
         @RequestAttribute(required = false, value = "involvedCancerStudies") Collection<String> involvedCancerStudies,
-        @Parameter(required = true, description = "Intercepted Namespace Data Count Filter")
-        @Valid @RequestAttribute(required = false, value = "interceptedNamespaceDataCountFilter") NamespaceDataCountFilter interceptedNamespaceDataCountFilter) 
-        throws StudyNotFoundException {
+        @Parameter(hidden = true)
+        @Valid @RequestAttribute(required = false, value = "interceptedNamespaceDataCountFilter") NamespaceDataCountFilter interceptedNamespaceDataCountFilter) {
 
         List<NamespaceDataFilter> namespaceDataFilters = interceptedNamespaceDataCountFilter.getAttributes();
         StudyViewFilter studyViewFilter = interceptedNamespaceDataCountFilter.getStudyViewFilter();
-        // when there is only one filter, it means study view is doing a single chart filter operation
-        // remove filter from studyViewFilter to return all data counts
-        // the reason we do this is to make sure after chart get filtered, user can still see unselected portion of the chart
+
         if (namespaceDataFilters.size() == 1) {
             studyViewFilterUtil.removeSelfFromNamespaceDataFilter(
                 namespaceDataFilters.get(0).getOuterKey(), 

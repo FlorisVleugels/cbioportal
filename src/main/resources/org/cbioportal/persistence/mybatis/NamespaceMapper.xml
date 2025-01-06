@@ -89,11 +89,12 @@
     <select id="getNamespaceDataCounts" resultType="org.cbioportal.model.NamespaceDataCount">
         SELECT 
             JSON_UNQUOTE(JSON_EXTRACT(ANNOTATION_JSON, CONCAT('$.', #{outerKey}, '.', #{innerKey}))) AS value,
-            JSON_UNQUOTE(JSON_EXTRACT(ANNOTATION_JSON, CONCAT('$.', #{outerKey}, '.', #{innerKey}))) AS #{innerKey},
+            #{outerKey} AS outerKey,
+            #{innerKey} AS innerKey,
             COUNT(*) AS count
+        FROM mutation
         <include refid="joinSample"/>
         <include refid="whereSample"/>
-        FROM mutation
         GROUP BY value;
     </select>
 
