@@ -1284,7 +1284,7 @@ public class StudyViewController {
         @Valid @RequestAttribute(required = false, value = "interceptedNamespaceDataCountFilter") NamespaceDataCountFilter interceptedNamespaceDataCountFilter) 
         throws StudyNotFoundException {
 
-        List<NamespaceDataFilter> namespaceDataFilters = interceptedNamespaceDataCountFilter.getNamespaceDataFilters();
+        List<NamespaceDataFilter> namespaceDataFilters = interceptedNamespaceDataCountFilter.getAttributes();
         StudyViewFilter studyViewFilter = interceptedNamespaceDataCountFilter.getStudyViewFilter();
         // when there is only one filter, it means study view is doing a single chart filter operation
         // remove filter from studyViewFilter to return all data counts

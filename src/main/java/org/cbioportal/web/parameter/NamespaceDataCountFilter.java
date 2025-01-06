@@ -5,15 +5,15 @@ import java.util.List;
 
 public class NamespaceDataCountFilter implements Serializable {
 
-    private List<NamespaceDataFilter> namespaceDataFilters;
+    private List<NamespaceDataFilter> attributes;
     private StudyViewFilter studyViewFilter;
 
-    public List<NamespaceDataFilter> getNamespaceDataFilters() {
-        return namespaceDataFilters;
+    public List<NamespaceDataFilter> getAttributes() {
+        return attributes;
     }
 
-    public void setNamespaceDataFilters(List<NamespaceDataFilter> namespaceDataFilters) {
-        this.namespaceDataFilters = namespaceDataFilters;
+    public void setAttributes(List<NamespaceDataFilter> attributes) {
+        this.attributes = attributes;
     }
 
     public StudyViewFilter getStudyViewFilter() {

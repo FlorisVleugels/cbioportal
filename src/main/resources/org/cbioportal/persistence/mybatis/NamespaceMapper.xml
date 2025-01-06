@@ -9,6 +9,7 @@
         INNER JOIN cancer_study ON patient.CANCER_STUDY_ID = cancer_study.CANCER_STUDY_ID
     </sql>
 
+
     <sql id="whereSample">
         <where>
             <if test="sampleIds == null">
@@ -30,6 +31,13 @@
                 </if>
             </if>
         </where>
+    </sql>
+
+    <sql id="fromTable">
+    FROM
+        <foreach item="item" collection="datatypes" open="(" separator="," close=")">
+            #{item}
+        </foreach>
     </sql>
 
     <select id="getNamespaceOuterKey" resultType="org.cbioportal.model.Namespace">
