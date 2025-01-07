@@ -150,18 +150,41 @@ public class StudyViewServiceImpl implements StudyViewService {
                                                                  List<String> sampleIds,
                                                                  List<Pair<String, String>> namespaceDataFilters) {
 
-        return namespaceDataFilters
-            .stream()
-            .flatMap(namespaceDataFilter -> {
-                String outerKey = namespaceDataFilter.getKey();
-                String innerKey = namespaceDataFilter.getValue();
+        if (namespaceDataFilters.isEmpty()) {
+            return new ArrayList<>();
+        }
 
-                List<NamespaceDataCount> namespaceDataCountItem = namespaceCountService.fetchNamespaceDataCounts(studyIds, sampleIds, outerKey,
-                                                                                                               innerKey);
-                return Stream.ofNullable(namespaceDataCountItem);
-            }).toList();
+        return namespaceDataFilters.stream().map(namespaceDataFilter -> {
+            String outerKey = namespaceDataFilter.getKey();
+            String innerKey = namespaceDataFilter.getValue();
+
+            List<NamespaceDataCount> namespaceDataCounts = namespaceCountService.fetchNamespaceDataCounts(studyIds, sampleIds, outerKey, innerKey);
+
+            if (namespaceDataCounts == null || namespaceDataCounts.isEmpty()) {
+                return null;
+            }
+
+            int totalCount = namespaceDataCounts.stream().mapToInt(NamespaceDataCount::getCount).sum();
+            int naCount = sampleIds.size() - totalCount;
+
+            if (naCount > 0) {
+                NamespaceDataCount naDataCount = new NamespaceDataCount();
+                naDataCount.setOuterKey(outerKey);
+                naDataCount.setInnerKey(innerKey);
+                naDataCount.setValue("NA");
+                naDataCount.setCount(naCount);
+                namespaceDataCounts.add(naDataCount);
+            }
+
+            NamespaceDataCountItem namespaceDataCountItem = new NamespaceDataCountItem();
+            namespaceDataCountItem.setOuterKey(outerKey);
+            namespaceDataCountItem.setInnerKey(innerKey);
+            namespaceDataCountItem.setCounts(namespaceDataCounts);
+
+            return namespaceDataCountItem;
+
+        }).collect(Collectors.toList());
     }
-
 
     @Override
     public List<GenomicDataCountItem> getMutationCountsByGeneSpecific(List<String> studyIds,
