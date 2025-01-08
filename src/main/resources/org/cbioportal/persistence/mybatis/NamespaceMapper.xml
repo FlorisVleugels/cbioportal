@@ -91,10 +91,12 @@
             JSON_UNQUOTE(JSON_EXTRACT(ANNOTATION_JSON, CONCAT('$.', #{outerKey}, '.', #{innerKey}))) AS value,
             #{outerKey} AS outerKey,
             #{innerKey} AS innerKey,
-            COUNT(*) AS count
+            count(distinct(SAMPLE_ID)) as "count"
         FROM mutation
         <include refid="joinSample"/>
         <include refid="whereSample"/>
+        and JSON_EXTRACT(ANNOTATION_JSON, CONCAT('$.', #{outerKey}, '.', #{innerKey})) IS NOT NULL 
+        and JSON_UNQUOTE(JSON_EXTRACT(ANNOTATION_JSON, CONCAT('$.', #{outerKey}, '.', #{innerKey}))) != 'null'
         GROUP BY value;
     </select>
 
