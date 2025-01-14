@@ -100,4 +100,16 @@
         GROUP BY value;
     </select>
 
+    <select id="getNamespaceData" resultType="org.cbioportal.model.NamespaceData">
+        SELECT 
+            GROUP_CONCAT(JSON_UNQUOTE(JSON_EXTRACT(ANNOTATION_JSON, CONCAT('$.', #{outerKey}, '.', #{innerKey})))) AS attrValue,
+            #{outerKey} AS outerKey,
+            #{innerKey} AS innerKey,
+            cancer_study.CANCER_STUDY_IDENTIFIER AS studyId,
+            sample.STABLE_ID AS sampleId
+        FROM mutation
+        <include refid="joinSample"/>
+        GROUP BY sampleId, studyId;
+    </select>
+
 </mapper>

@@ -30,6 +30,7 @@ import org.cbioportal.web.parameter.GenomicDataBinFilter;
 import org.cbioportal.web.parameter.GenomicDataFilter;
 import org.cbioportal.web.parameter.MutationDataFilter;
 import org.cbioportal.web.parameter.MutationOption;
+import org.cbioportal.web.parameter.NamespaceDataFilter;
 import org.cbioportal.web.parameter.Projection;
 import org.cbioportal.web.parameter.SampleIdentifier;
 import org.cbioportal.web.parameter.StudyViewFilter;
@@ -182,6 +183,32 @@ public class StudyViewFilterUtil {
         return count;
     }
 
+    public <S> Integer getFilteredCountByNamespaceDataEquality(List<NamespaceDataFilter> attributes, MultiKeyMap<String, S> namespaceDataMap,
+                                                      String entityId, String studyId, boolean negateFilters) {
+        Integer count = 0;
+        for (NamespaceDataFilter s : attributes) {
+            List<String> filteredValues = s.getValues()
+                .stream()
+                .map(DataFilterValue::getValue)
+                .collect(Collectors.toList());
+            filteredValues.replaceAll(String::toUpperCase);
+            if (namespaceDataMap.containsKey(studyId, entityId, s.getOuterKey(), s.getInnerKey())) {
+                S value = namespaceDataMap.get(studyId, entityId, s.getOuterKey(), s.getInnerKey());
+                if (value instanceof String) {
+                    if (negateFilters ^ filteredValues.contains(value)) {
+                        count++;
+                    }
+                } else if (value instanceof List &&
+                    negateFilters ^ filteredValues.stream().anyMatch(((List<?>) value)::contains)) {
+                    count++;
+                }
+            } else if (negateFilters ^ filteredValues.contains("NA")) {
+                count++;
+            }
+        }
+        return count;
+    }
+
     public List<ClinicalDataCountItem> getClinicalDataCountsFromCustomData(Collection<CustomDataSession> customDataSessions,
                                                                            Map<String, SampleIdentifier> filteredSamplesMap, List<Patient> patients) {
         int totalSamplesCount = filteredSamplesMap.keySet().size();
@@ -246,7 +273,8 @@ public class StudyViewFilterUtil {
             (filter.getGenericAssayDataFilters() == null || filter.getGenericAssayDataFilters().isEmpty()) &&
             (filter.getCaseLists() == null || filter.getCaseLists().isEmpty()) &&
             (filter.getCustomDataFilters() == null || filter.getCustomDataFilters().isEmpty()) &&
-            (filter.getMutationDataFilters() == null || filter.getMutationDataFilters().isEmpty());
+            (filter.getMutationDataFilters() == null || filter.getMutationDataFilters().isEmpty()) &&
+        (filter.getNamespaceDataFilters() == null || filter.getNamespaceDataFilters().isEmpty());
     }
 
     public boolean shouldSkipFilterForClinicalDataBins(StudyViewFilter filter) {
@@ -267,6 +295,7 @@ public class StudyViewFilterUtil {
                 filter.getSampleTreatmentTargetFilters() == null &&
                 filter.getGenomicProfiles() == null &&
                 filter.getGenomicDataFilters() == null &&
+                filter.getNamespaceDataFilters() == null &&
                 filter.getGenericAssayDataFilters() == null &&
                 filter.getCaseLists() == null &&
                 filter.getCustomDataFilters() == null

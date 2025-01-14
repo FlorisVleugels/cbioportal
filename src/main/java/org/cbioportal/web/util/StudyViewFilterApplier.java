@@ -54,6 +54,7 @@ import org.cbioportal.web.parameter.GenomicDataBinFilter;
 import org.cbioportal.web.parameter.GenomicDataFilter;
 import org.cbioportal.web.parameter.MutationDataFilter;
 import org.cbioportal.web.parameter.MutationOption;
+import org.cbioportal.web.parameter.NamespaceDataFilter;
 import org.cbioportal.web.parameter.Projection;
 import org.cbioportal.web.parameter.SampleIdentifier;
 import org.cbioportal.web.parameter.StudyViewFilter;
@@ -104,6 +105,8 @@ public class StudyViewFilterApplier {
     private ClinicalDataIntervalFilterApplier clinicalDataIntervalFilterApplier;
     @Autowired
     private CustomDataFilterApplier customDataFilterApplier;
+    @Autowired
+    private NamespaceDataEqualityFilterApplier namespaceDataEqualityFilterApplier;
     @Autowired
     private StudyViewFilterUtil studyViewFilterUtil;
     @Autowired
@@ -209,6 +212,11 @@ public class StudyViewFilterApplier {
 
         if (!CollectionUtils.isEmpty(studyViewFilter.getCustomDataFilters())) {
             sampleIdentifiers = customDataFilterApplier.apply(sampleIdentifiers, studyViewFilter.getCustomDataFilters(),
+                negateFilters);
+        }
+
+        if (!CollectionUtils.isEmpty(studyViewFilter.getNamespaceDataFilters())) {
+            sampleIdentifiers = equalityFilterNamespaceData(sampleIdentifiers, studyViewFilter.getNamespaceDataFilters(),
                 negateFilters);
         }
 
@@ -400,6 +408,12 @@ public class StudyViewFilterApplier {
                                                               List<ClinicalDataFilter> clinicalDataEqualityFilters,
                                                               boolean negateFilters) {
         return clinicalDataEqualityFilterApplier.apply(sampleIdentifiers, clinicalDataEqualityFilters, negateFilters);
+    }
+
+    private List<SampleIdentifier> equalityFilterNamespaceData(List<SampleIdentifier> sampleIdentifiers,
+                                                              List<NamespaceDataFilter> namespaceDataEqualityFilters,
+                                                              boolean negateFilters) {
+        return namespaceDataEqualityFilterApplier.apply(sampleIdentifiers, namespaceDataEqualityFilters, negateFilters);
     }
 
     private List<SampleIdentifier> filterMutatedGenes(List<GeneFilter> mutatedGenefilters,

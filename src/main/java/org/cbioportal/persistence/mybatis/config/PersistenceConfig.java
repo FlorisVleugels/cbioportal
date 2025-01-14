@@ -2,6 +2,7 @@ package org.cbioportal.persistence.mybatis.config;
 
 import org.cbioportal.model.Sample;
 import org.cbioportal.persistence.mybatis.typehandler.SampleTypeTypeHandler;
+import org.cbioportal.persistence.mybatis.typehandler.CommaSeparatedListTypeHandler;
 import org.mybatis.spring.SqlSessionFactoryBean;
 import org.mybatis.spring.annotation.MapperScan;
 import org.mybatis.spring.boot.autoconfigure.ConfigurationCustomizer;
@@ -11,7 +12,6 @@ import org.springframework.context.annotation.Configuration;
 
 import javax.sql.DataSource;
 import java.io.IOException;
-
 
 @Configuration
 @MapperScan("org.cbioportal.persistence.mybatis")
@@ -26,6 +26,7 @@ public class PersistenceConfig {
             @Override
             public void customize(org.apache.ibatis.session.Configuration configuration) {
                 configuration.getTypeHandlerRegistry().register(Sample.SampleType.class, new SampleTypeTypeHandler());
+                configuration.getTypeHandlerRegistry().register(java.util.List.class, new CommaSeparatedListTypeHandler());
             }
         };
     }
@@ -37,8 +38,8 @@ public class PersistenceConfig {
         sessionFactory.setMapperLocations(
             applicationContext.getResources("classpath:org/cbioportal/persistence/mybatis/*.xml")
         );
-        sessionFactory.setTypeHandlers(new SampleTypeTypeHandler());
+        
+        sessionFactory.setTypeHandlers(new SampleTypeTypeHandler(), new CommaSeparatedListTypeHandler());
         return sessionFactory;
     }
-    
 }
